@@ -52,7 +52,7 @@ RUN cd / \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y nvidia-384 \
 	&& git clone https://github.com/habrman/FaceRecognition.git
 
-RUN pip install flask
+RUN pip install flask requests
 
 COPY ./run.py /FaceRecognition/run.py
 COPY ./start_server.sh /FaceRecognition/start_server.sh

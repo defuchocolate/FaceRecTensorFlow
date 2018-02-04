@@ -68,13 +68,17 @@ def identify():
     data = np.fromstring(request.data, np.uint8)
     img = cv2.imdecode(data, cv2.IMREAD_COLOR)
     face_patches, padded_bounding_boxes, landmarks = detect_and_align.align_image(img, pnet, rnet, onet)
+    names = []
+    distances = []
     if len(face_patches) > 0:
         embs = get_embeddings(face_patches)
         for emb in embs:
             data = {'vector': pickle.dumps(emb)}
             r = requests.post('http://localhost:5000/find', json=data)
-            #TODO: Fix for multiple requests
-        return jsonify(r.json())
+            r_json = r.json()
+            names.append(r_json.get('name', 'Unknown'))
+            distances.append(r_json.get('distance', -1))
+        return jsonify({'names': names, 'distances': distances})
     else:
         return 'No faces found'
     return jsonify({'vector': pickle.dumps(embs[0])})
